@@ -11,7 +11,6 @@ const CreateConnection = () => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [account_id, setAccountId] = useState<string>("");
-
     const validation = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -26,22 +25,40 @@ const CreateConnection = () => {
         }),
 
         onSubmit: values => {
-            console.log(values.username + values.password + values.account_id)
+            const url = `https://api.ongage.net/50893/api/contact_activity`
+            const headers = {
+                'X_USERNAME': values.username,
+                'X_PASSWORD': values.password,
+                'X_ACCOUNT_CODE': values.account_id
+            }
             let config = {
-                method: 'post',
+                method: 'get',
                 maxBodyLength: Infinity,
-                url: 'https://developintg.ongage.net/56181/api/export',
-                headers: {
-                    'X_USERNAME': values.username,
-                    'X_PASSWORD': values.password,
-                    'X_ACCOUNT_CODE': values.account_id,
-                    'Content-Type': 'application/json'
-                },
-                data :JSON.stringify({"segment_id": 2962884,"name":"test"})
+                url: url,
+                headers: headers
             };
+
             axios.request(config)
                 .then((response) => {
-                   
+                    const url = `http://127.0.0.1:5000/`
+                    const data = headers
+                    let config = {
+                        method: 'POST',
+                        maxBodyLength: Infinity,
+                        url: url,
+                        data:headers,
+                        headers: {
+                            "Content-Type":'application/json'
+                        }
+                    };
+                    axios.request(config)
+                        .then((response) => {
+                            console.log(response);
+                            
+                        })
+                    .catch((error) => {
+                        console.log(error);
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
